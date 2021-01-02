@@ -1,0 +1,25 @@
+{
+  "name": "Sandbox-social",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theophilus96/Sandbox-social.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theophilus96/Sandbox-social/issues"
+  },
+  "homepage": "https://github.com/theophilus96/Sandbox-social#readme",
+  "dependencies": {
+    "busboy": "^0.3.1",
+    "express": "^4.17.1",
+    "firebase": "^8.2.1"
+  }
+}
