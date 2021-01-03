@@ -101,10 +101,31 @@ exports.login = (req, res) => {
     });
 };
 
-//get own user details
-exports.getAuthenticatedUser = (req,res) =>{
-    let userData ={}
-    db.doc(`/users/${req.user.handle}`).get().then((doc)=>{
-        
+//add user details
+
+exports.addUserDetail = (req, res) => {
+  let userDetails = reduceUserDetails(req.body);
+
+  db.doc(`/users/${req.user.handle}`)
+    .update(userDetails)
+    .then(() => {
+      return res.json({ message: "details added successfully" });
     })
-}
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ errror: err.code });
+    });
+};
+
+//get own user details
+exports.getAuthenticatedUser = (req, res) => {
+  let userData = {};
+  db.doc(`/users/${req.user.handle}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        userData.credentials = doc.data();
+        return db.collection("likes");
+      }
+    });
+};
