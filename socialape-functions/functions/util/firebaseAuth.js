@@ -1,4 +1,5 @@
 const { admin, db } = require("./admin");
+
 module.exports = (req, res, next) => {
   let idToken;
   if (
@@ -8,7 +9,7 @@ module.exports = (req, res, next) => {
     idToken = req.headers.authorization.split("Bearer ")[1];
   } else {
     console.error("No token found");
-    return res.status(403).json({ error: "unathorized" });
+    return res.status(403).json({ error: "Unauthorized" });
   }
 
   admin
@@ -28,7 +29,7 @@ module.exports = (req, res, next) => {
       return next();
     })
     .catch((err) => {
-      console.error("error while verifying token ", err);
+      console.error("Error while verifying token ", err);
       return res.status(403).json(err);
     });
 };
