@@ -129,3 +129,11 @@ exports.getAuthenticatedUser = (req, res) => {
       }
     });
 };
+
+//upload a profile image for user
+exports.uploadImage = (req, res) => {
+  const BusBoy = require("busboy");
+  const path = require("path");
+  const os = require("os");
+  const fs = require("fs");
+};
