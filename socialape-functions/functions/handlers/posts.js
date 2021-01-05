@@ -118,3 +118,121 @@ exports.commentOnPost = (req, res) => {
     });
 };
 
+//like a post
+exports.likePost = (req, res) => {
+  const likeDocument = db
+    .collection("likes")
+    .where("userHandle", "==", req.user.handle)
+    .where("postId", "==", req.params.postId)
+    .limit(1);
+
+  const screamDocument = db.doc(`/posts/${req.params.postId}`);
+
+  let screamData;
+
+  screamDocument
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        screamData = doc.data();
+        screamData.postId = doc.id;
+        return likeDocument.get();
+      } else {
+        return res.status(404).json({ error: "post not found" });
+      }
+    })
+    .then((data) => {
+      if (data.empty) {
+        return db
+          .collection("likes")
+          .add({
+            postId: req.params.postId,
+            userHandle: req.user.handle,
+          })
+          .then(() => {
+            screamData.likeCount++;
+            return screamDocument.update({ likeCount: screamData.likeCount });
+          })
+          .then(() => {
+            return res.json(screamData);
+          });
+      } else {
+        return res.status(400).json({ error: "post already liked" });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
+
+//unlike a post
+exports.unlikePost = (req, res) => {
+  const likeDocument = db
+    .collection("likes")
+    .where("userHandle", "==", req.user.handle)
+    .where("postId", "==", req.params.postId)
+    .limit(1);
+
+  const screamDocument = db.doc(`/posts/${req.params.postId}`);
+
+  let screamData;
+
+  screamDocument
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        screamData = doc.data();
+        screamData.postId = doc.id;
+        return likeDocument.get();
+      } else {
+        return res.status(404).json({ error: "post not found" });
+      }
+    })
+    .then((data) => {
+      if (data.empty) {
+        return res.status(400).json({ error: "post not liked" });
+      } else {
+        return db
+          .doc(`/likes/${data.docs[0].id}`)
+          .delete()
+          .then(() => {
+            screamData.likeCount--;
+            return screamDocument.update({ likeCount: screamData.likeCount });
+          })
+          .then(() => {
+            res.json(screamData);
+          });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
+
+//delete a post
+exports.deletePost = (req, res) => {
+  const document = db.doc(`/posts/${req.params.postId}`);
+  document
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(404).json({
+          error: "post not found",
+        });
+      }
+      if (doc.data().userHandle !== req.user.handle) {
+        return res.status(403).json({ error: "unauthorized" });
+      } else {
+        return document.delete();
+      }
+    })
+    .then(() => {
+      res.json({ message: " post deleted successfully" });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
