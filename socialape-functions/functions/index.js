@@ -5,7 +5,7 @@ const firebase = require("firebase");
 const { admin, db } = require("./util/admin");
 const firebaseAuth = require("./util/firebaseAuth");
 
-const { getAllPost, postOnePost } = require("./handlers/posts");
+const { getAllPost, postOnePost, getPost ,commentOnPost} = require("./handlers/posts");
 const {
   signup,
   login,
@@ -18,7 +18,9 @@ const {
 //post routes
 app.get("/screams", getAllPost);
 app.post("/scream", firebaseAuth, postOnePost);
-//app.get("/scream/:screamId");
+app.get("/scream/:postId", firebaseAuth, getPost);
+app.post("/scream/:postId/comment", firebaseAuth, commentOnPost);
+app.get("/scream/:postId/like",firebaseAuth,likePost)
 
 //users routes
 app.post("/signup", signup);
