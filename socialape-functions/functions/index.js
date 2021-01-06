@@ -40,3 +40,71 @@ app.post("/user", firebaseAuth, addUserDetails);
 app.get("/user", firebaseAuth, getAuthenticatedUser);
 
 exports.api = functions.region("us-central1").https.onRequest(app);
+
+exports.createNotificationOnLike = functions
+  .region("us-central1")
+  .firestore.document("likes/{id}")
+  .onCreate((snapshot) => {
+    return db
+      .doc(`/posts/${snapshot.data().postId}`)
+      .get()
+      .then((doc) => {
+        if (
+          doc.exists &&
+          doc.data().userHandle !== snapshot.data().userHandle
+        ) {
+          return db.doc(`/notifications/${snapshot.id}`).set({
+            createdAt: new Date().toISOString(),
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            type: "like",
+            read: false,
+            postId: doc.id,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
+
+exports.deleteNotificationOnUnlike = functions
+  .region("us-central1")
+  .firestore.document("likes/{id}")
+  .onDelete((snapshot) => {
+    return db
+      .doc(`/notifications/${snapshot.id}`)
+      .delete()
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
+
+exports.createNotificationOnComment = functions
+  .region("us-central1")
+  .firestore.document("comments/{id}")
+  .onCreate((snapshot) => {
+    return db
+      .doc(`/posts/${snapshot.data().postId}`)
+      .get()
+      .then((doc) => {
+        if (
+          doc.exists &&
+          doc.data().userHandle !== snapshot.data().userHandle
+        ) {
+          return db.doc(`/notifications/${snapshot.id}`).set({
+            createdAt: new Date().toISOString(),
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            type: "comment",
+            read: false,
+            postId: doc.id,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
