@@ -21,6 +21,7 @@ const {
   getUserDetails,
   uploadImage,
   addUserDetails,
+  markNotificationsRead,
 } = require("./handlers/users");
 
 //post routes
@@ -38,6 +39,8 @@ app.post("/login", login);
 app.post("/user/image", firebaseAuth, uploadImage);
 app.post("/user", firebaseAuth, addUserDetails);
 app.get("/user", firebaseAuth, getAuthenticatedUser);
+app.get("/user/:handle", getUserDetails);
+app.post("/notifications", firebaseAuth, markNotificationsRead);
 
 exports.api = functions.region("us-central1").https.onRequest(app);
 
