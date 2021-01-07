@@ -23,8 +23,6 @@ const {
   addUserDetails,
   markNotificationsRead,
 } = require("./handlers/users");
-const { default: context } = require("react-bootstrap/esm/AccordionContext");
-const { data } = require("remark");
 
 //post routes
 app.get("/screams", getAllPost);
