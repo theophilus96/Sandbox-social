@@ -42,7 +42,7 @@ app.get("/user", firebaseAuth, getAuthenticatedUser);
 app.get("/user/:handle", getUserDetails);
 app.post("/notifications", firebaseAuth, markNotificationsRead);
 
-exports.api = functions.region("us-central1").https.onRequest(app);
+exports.api = functions.region("asia-southeast2").https.onRequest(app);
 
 exports.createNotificationOnLike = functions
   .region("us-central1")
